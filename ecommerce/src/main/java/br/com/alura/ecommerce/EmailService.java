@@ -25,7 +25,7 @@ public class EmailService {
                     System.out.println(record.partition());
                     System.out.println(record.offset());
                     try {
-                        Thread.sleep(1000);
+                        Thread.sleep(5000);
                     } catch (InterruptedException e) {
                         //ignoring
                         e.printStackTrace();
