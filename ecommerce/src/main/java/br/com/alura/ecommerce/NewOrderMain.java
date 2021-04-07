@@ -4,25 +4,30 @@ import org.apache.kafka.clients.producer.*;
 import org.apache.kafka.common.serialization.StringSerializer;
 
 import java.util.Properties;
+import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 
 public class NewOrderMain {
 
     public  static void main(String [] ars) throws ExecutionException, InterruptedException {
         var producer = new KafkaProducer<String, String>(properties());
-        var value = "21323,123123,131";
-        var record = new ProducerRecord<>("ECOMMERCE_NEW_ORDER", value, value);
-       Callback callback = (data, ex) ->{
-            if(ex != null){
-                ex.printStackTrace();
-                return;
-            }
-            System.out.println("Sucesso enviando " + data.topic() + ":::partition " + data.partition() + "/ offset " + data.offset() + "/ timeStamp " + data.timestamp());
-        };
-       var email = "Welcome! we are processing your order";
-       var emailRecord = new ProducerRecord<>("ECOMMERCE_SEND_EMAIL", "email","email");
-       producer.send(record, callback).get();
-        producer.send(emailRecord, callback).get();
+
+        for (var i = 0; i<100;i++) {
+            var key = UUID.randomUUID().toString();
+            var value = key + "123123,131";
+            var record = new ProducerRecord<>("ECOMMERCE_NEW_ORDER", value, value);
+            Callback callback = (data, ex) -> {
+                if (ex != null) {
+                    ex.printStackTrace();
+                    return;
+                }
+                System.out.println("Sucesso enviando " + data.topic() + ":::partition " + data.partition() + "/ offset " + data.offset() + "/ timeStamp " + data.timestamp());
+            };
+            var email = "Welcome! we are processing your order";
+            var emailRecord = new ProducerRecord<>("ECOMMERCE_SEND_EMAIL", "email", "email");
+            producer.send(record, callback).get();
+            producer.send(emailRecord, callback).get();
+        }
     }
 
     private static Properties properties(){
